@@ -1,0 +1,29 @@
+const uint8_t pir_pin = 2;
+const uint8_t led_pin = 13;
+
+uint8_t led_state = LOW;
+  
+void setup()
+{
+  pinMode(pir_pin, INPUT);
+  pinMode(led_pin, OUTPUT);
+  Serial.begin(9600);
+  
+  attachInterrupt(digitalPinToInterrupt(pir_pin), toggle, CHANGE);
+}
+
+void loop()
+{
+  
+  
+  delay(100); // Wait for 100 millisecond(s)
+  
+}
+
+void toggle() 
+{
+  	
+   	led_state=!led_state;
+  	digitalWrite(led_pin, led_state);
+  	Serial.println(led_state);
+}
