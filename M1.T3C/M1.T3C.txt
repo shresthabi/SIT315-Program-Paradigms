@@ -1,0 +1,60 @@
+const uint8_t led_pin1 = 13;
+const uint8_t pir_pin = 2;
+const uint8_t led_pin2 = 12;
+const uint8_t button_pin = 3;
+
+
+void setup()
+{ 
+    Serial.begin(9600);
+ 
+    pinMode(pir_pin, INPUT);
+    pinMode(button_pin, INPUT);
+    pinMode(led_pin1, OUTPUT);
+    pinMode(led_pin2, OUTPUT);
+  	
+    attachInterrupt(digitalPinToInterrupt(pir_pin), toggleMotion, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(button_pin), toggleButton, CHANGE);
+}
+
+
+void loop()
+{ 	
+    delay(100);
+}
+                    
+
+void toggleMotion()
+{
+  	
+    if (digitalRead(pir_pin) == HIGH)
+    {	
+    	Serial.print("Motion ON,");        
+     	digitalWrite(led_pin1, HIGH);    	
+     	Serial.println(" LED ON");
+    }  	
+    else 
+    { 	
+    	Serial.print("Motion OFF,");              
+     	digitalWrite(led_pin1, LOW);     	
+     	Serial.println(" LED OFF");
+    }
+}
+
+
+void toggleButton()
+{
+  	
+    if (digitalRead(button_pin) == HIGH)
+    {
+    	Serial.print("Button ON,");           
+     	digitalWrite(led_pin2, HIGH);     	
+     	Serial.println(" LED ON");
+    }
+    else 
+    {	
+    	Serial.print("Button OFF,");
+     	digitalWrite(led_pin2, LOW);
+     	Serial.println(" LED OFF");
+    }
+}
