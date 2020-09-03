@@ -9,20 +9,6 @@ using namespace std;
 
 int A[MAX][MAX], B[MAX][MAX], C[MAX][MAX];
 
-void openmpMultiplication(int openmpid)
-{
-  for (int i = openmpid * MAX / TOTAL_THREAD; i < (openmpid + 1) * MAX / TOTAL_THREAD; i++)
-  {
-    for (int j = 0; j < MAX; j++)
-    {
-      
-      for (int k = 0; k < MAX; k++)
-      {
-        (A[i][j]) += (B[i][k]) * (C[k][j]);
-      }
-    }
-  }
-}
 
 void buildMatrix(int matrix[MAX][MAX])
 {
@@ -47,27 +33,37 @@ int main()
   {
     for (int j = 0; j < MAX; j++)
     {
+      A[i][j] = 0;
       B[i][j] = rand() % 20;
       C[i][j] = rand() % 20;
+
     }
   }
 
-  printf("A random 20x20 matrix generated as Matrix A: \n");
-  buildMatrix(B);
   printf("A random 20x20 matrix generated as Matrix B: \n");
+  buildMatrix(B);
+  printf("A random 20x20 matrix generated as Matrix C: \n");
   buildMatrix(C);
 
   auto start = chrono::high_resolution_clock::now();
 
-  #pragma omp parallel
+  int i, j, k;
+  
+  #pragma omp parallel for private(i,j,k) shared(A, B, C)	num_threads(TOTAL_THREAD)
+	for (i = 0; i < MAX; ++i)
   {
-    int i = omp_get_thread_num();
-    openmpMultiplication(i);
+		for (j = 0; j < MAX; ++j)
+    {
+			for (k = 0; k < MAX; ++k)
+			{
+				A[i][j] += B[i][k] * C[k][j];
+			}
+    }
   }
 
   auto end = chrono::high_resolution_clock::now();
 
-  printf("Matrix Multiplication of Matrix A and B is: \n");
+  printf("Matrix Multiplication of Matrix B and C is: \n");
   buildMatrix(A);
   
   auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
